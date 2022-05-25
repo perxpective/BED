@@ -6,7 +6,7 @@ BED Assignment CA1
 
 # SUMMARY OF ENDPOINTS CREATED
 1. Endpoint 1 - POST /users/
-2. Endpoint 2 - GET /users/`
+2. Endpoint 2 - GET /users/
 3. Endpoint 3 - GET /users/:id
 4. Endpoint 4 - PUT /users/:id
 5. Endpoint 5 - POST /airport
@@ -89,6 +89,7 @@ app.use(urlencodedParser)           // Parse application/x-www-form-urlencoded
 
 // Endpoint #1: Using the POST method to add a new user to the database
 app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
+    
     // Retrieve POST data field representing columns of data from the user table
     var username = req.body.username
     var email = req.body.email
