@@ -1,0 +1,56 @@
+# Documentation
+
+## Database
+
+### Tables
+- user - stores user information
+    - user id
+    - username
+    - email
+    - contact number
+    - password
+    - role
+    - profile picture
+
+- flight - stores flight information
+    - flight id 
+    - flight code
+    - aircraft type
+    - origin airport
+    - destination airport
+    - embark date
+    - travel time
+    - price
+ 
+- airport
+    - airport id
+    - name of airport
+    - country of airport
+    - description of airport
+
+- bookings
+    - booking id
+    - name
+    - passport
+    - nationality
+    - age
+
+- promotion
+    - promotion id
+    - startDate
+    - endDate
+    - discount
+    - flight id
+
+## Endpoints
+1. Endpoint 1 - POST `/users/`
+2. Endpoint 2 - GET `/users/` 
+3. Endpoint 3 - GET `/users/:id`
+4. Endpoint 4 - PUT `/users/:id`
+5. Endpoint 5 - POST `/airport`
+6. Endpoint 6 - GET `/airport`
+7. Endpoint 7 - POST `/flight`
+8. Endpoint 8 - GET `/flightDirect/:originAirportId/:destinationAirportId`
+9. Endpoint 9 - POST `/booking/:userid/:flightid`
+10. Endpoint 10 - DELETE `/flight/:id/`
+11. Endpoint 11 - GET `/transfer/flight/:originAirportId/:destinationAirportId`
