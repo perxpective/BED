@@ -89,7 +89,7 @@ app.use(urlencodedParser)           // Parse application/x-www-form-urlencoded
 
 // Endpoint #1: Using the POST method to add a new user to the database
 app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
-    
+
     // Retrieve POST data field representing columns of data from the user table
     var username = req.body.username
     var email = req.body.email
