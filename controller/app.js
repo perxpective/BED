@@ -3,6 +3,7 @@ BED Assignment CA1
 -   Name: Lee Quan Jun Ervin
 -   Class: DISM/FT/2B/21
 -   Filename: app.js
+-   Description: This file is where all the endpoints are stored (Tested using POSTMAN)
 
 # TABLES CREATED
 - user
@@ -11,6 +12,11 @@ BED Assignment CA1
 - booking
 - promotion
 - transfer
+
+# FOREIGN KEYS USED
+.
+.
+.
 
 # SUMMARY OF ENDPOINTS CREATED
 1. Endpoint 1 - POST /users/
@@ -27,6 +33,8 @@ BED Assignment CA1
 12. Endpoint 12 - POST /transfer/flight/
 
 # BONUS REQUIREMENTS FUFILLMENT
+- Additional endpoints related to handling a database for transfer flights
+
 - Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
     > File size limited to 1MB, otherwise error will be outputted
     > Only JPG and PNG files are accepted, using fileFilter function in Multer object and comparing with file mimetype
@@ -40,9 +48,27 @@ BED Assignment CA1
 
 
 # ADVANCED FEATURES IMPLEMENTATIONS
-- Checking out booked flights (applying discounts if there are any) [GET /checkout/:bookingid]
+1. Checking out booked flights (applying promotional discounts if there are any) [booking table modified from requirements]
+    > Create new checkout table
     > Apply and validate promotions based on date of booking and promotion period
-    > Validate if there are items in the cart, return error if cart is empty
+    > User can select a class (First, Business, Economy)
+    > Calculate price based on class seat booked
+        + Flight prices are default economy
+        + Business class seats will be 30% more expensive than economy class
+        + First class seats will be 100% more expensive than economy class seats
+        + Users will book the same class seat for both transfer flights
+    > Class is inputted from request body and will appear in the checkout
+    > Final price will be calculated and written to the checkout database
+    > Checkout can be retreived to view transcations and payment information
+
+2. Search for cheap flights based on origin and destination city [GET /searchCheapFlights/:originAirportId/:destinationAirportId/:transfer]
+    > Cheap flight tickets are priced $500 or lower
+    > Flights are filtered based on this condition
+    > Transfer flights are searched separately by the parameter (yes, no)
+    > Yes = Search transfer flights, No = Search flights without transfers
+
+3. Search for all flights by airline [GET /searchAirline/:airlineCode/:transfer]
+    > Transfer flights are searched separately
 
 - Searching for cheap flights based on origin and destination city [GET /searchCheapFlights/:originAirportId/:destinationAirportId]
 
@@ -324,6 +350,8 @@ app.post("/booking/:userid/:flightid", upload.single(), (req, res) => {
 app.delete("/flight/:id", (req, res) => {
     // Get flightid from request parameters
     var flightid = req.params.id
+
+    // Function to delete a flight from the flight database
     flight.deleteFlight(flightid, (err, result) => {
         if (!err) {
             res.status(200).send({"Message":"Deletion Successful!"})
