@@ -4,6 +4,14 @@ BED Assignment CA1
 -   Class: DISM/FT/2B/21
 -   Filename: app.js
 
+# TABLES CREATED
+- user
+- flight
+- airport
+- booking
+- promotion
+- transfer
+
 # SUMMARY OF ENDPOINTS CREATED
 1. Endpoint 1 - POST /users/
 2. Endpoint 2 - GET /users/
@@ -16,6 +24,7 @@ BED Assignment CA1
 9. Endpoint 9 - POST /booking/:userid/:flightid
 10. Endpoint 10 - DELETE /flight/:id/
 11. Endpoint 11 - GET /transfer/flight/:originAirportId/:destinationAirportId
+12. Endpoint 12 - POST /transfer/flight/
 
 # BONUS REQUIREMENTS FUFILLMENT
 - Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
@@ -24,14 +33,18 @@ BED Assignment CA1
     > Feature is only available for user endpoints
 
 - Endpoints related to promotional discounts for certain periods
-    12. Endpoint 12 - POST /promotions/:flightid - Create a new promotion
-    13. Endpoint 13 - GET /promotions - Get all promotions
-    14. Endpoint 14 - GET /promotions/:promotionid - Get promotion by promotionid
-    15. Endpoitn 15 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
+    13. Endpoint 13 - POST /promotions/:flightid - Create a new promotion
+    14. Endpoint 14 - GET /promotions - Get all promotions
+    15. Endpoint 15 - GET /promotions/:promotionid - Get promotion by promotionid
+    16. Endpoitn 16 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
 
-# ADVANCED FEATURES IMPLEMENTED
+
+# ADVANCED FEATURES IMPLEMENTATIONS
 - Checking out booked flights (applying discounts if there are any) [GET /checkout/:bookingid]
-- Searching for cheap flights based on origin and destination city [GET /search/:originAirportId/:destinationAirportId]
+    > Apply and validate promotions based on date of booking and promotion period
+    > Validate if there are items in the cart, return error if cart is empty
+
+- Searching for cheap flights based on origin and destination city [GET /searchCheapFlights/:originAirportId/:destinationAirportId]
 
 */
 
@@ -327,6 +340,8 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
     var destinationAirportId = req.params.destinationAirportId
 
 })
+
+
 
 // Export app over to the main server.js file
 module.exports = app
