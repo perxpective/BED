@@ -36,7 +36,7 @@ BED Assignment CA1
     13. Endpoint 13 - POST /promotions/:flightid - Create a new promotion
     14. Endpoint 14 - GET /promotions - Get all promotions
     15. Endpoint 15 - GET /promotions/:promotionid - Get promotion by promotionid
-    16. Endpoitn 16 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
+    16. Endpoint 16 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
 
 
 # ADVANCED FEATURES IMPLEMENTATIONS
