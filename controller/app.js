@@ -369,6 +369,11 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
 
 })
 
+// Endpoint #12: Add new flight with transfers
+app.post("/transfer/flight/", (req, res) => {
+    
+})
+
 
 
 // Export app over to the main server.js file

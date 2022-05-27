@@ -168,58 +168,6 @@ var flightDB = {
                 })
             }
         })
-    },
-
-    // Function to get transfer flights from the flight database based on origin airport and destination airport
-    getTransfers: (originAirportId, destinationAirportId, callback) => {
-        // Function to get airport name based on id
-        function getAirportName(id) {
-            var connection = db.getConnection()
-            connection.connect((err) => {
-                if (err) {
-                    console.log(err)
-                    return callback(err, null)
-                } else {
-                    // SQL statement to delete flight based on flightid
-                    var sql = "select * from sp_air.airport where airportid = ?"
-                    connection.query(sql, [id], (err, result) => {
-                        connection.end()
-                        if (err) {
-                            console.log(err)
-                            return callback(err, null)
-                        } else {
-                            console.log(result)
-                            console.table(result)
-                            return callback(null, result)
-                        }
-                    })
-                }
-            })
-        }
-
-        var connection = db.getConnection()
-        connection.connect((err) => {
-            if (err) {
-                console.log(err)
-                return callback(err, null)
-            } else {
-                var originAirport = JSON.parse(getAirportName(originAirportId))
-                var destinationAirport = JSON.parse(getAirportName(destinationAirportId))
-                console.log(originAirport)
-                console.log(destinationAirport)
-                var sql = "select * from sp_air.flight where originAirport = ? and destinationAirport = ?"
-                connection.query(sql, [originAirport, destinationAirport], (err, result) => {
-                    if (err) {
-                        console.log(err)
-                        return callback(err, null)
-                    } else {
-                        console.log(result)
-                        console.table(result)
-                        return callback(null, result)
-                    }
-                })
-            }
-        })
     }
 }
 
