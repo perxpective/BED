@@ -371,9 +371,15 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
 
 // Endpoint #12: Add new flight with transfers
 app.post("/transfer/flight/", (req, res) => {
+    // Function to add a new transfer flight to the transfer database
+
     
 })
 
+// Endpoint #13: Using the POST method to create a new promotion on the promotion database
+app.post("/promotion/", (req, res) => {
+    // Function to add a new promotion and their dates into the promotion database
+})
 
 
 // Export app over to the main server.js file
