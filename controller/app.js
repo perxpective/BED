@@ -57,6 +57,7 @@ BED Assignment CA1
         + Business class seats will be 30% more expensive than economy class
         + First class seats will be 100% more expensive than economy class seats
         + Users will book the same class seat for both transfer flights
+        
     > Class is inputted from request body and will appear in the checkout
     > Final price will be calculated and written to the checkout database
     > Checkout can be retreived to view transcations and payment information
