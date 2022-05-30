@@ -62,6 +62,7 @@ Database name: sp_air
     - File size limited to 1MB, otherwise error will be outputted
     - Only JPG and PNG files are accepted, using fileFilter function in Multer object and comparing with file mimetype
     -  Feature is only available for user endpoints
+    - Uploaded files can be found under the uploads folder
 
 - Endpoints related to promotional discounts for certain periods
     1. Endpoint 13 - POST /promotions/:flightid - Create a new promotion

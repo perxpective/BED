@@ -280,7 +280,7 @@ app.get("/airport/", (req, res) => {
 })
 
 // Endpoint #7: Using the POST method to add new flight data to the flight database
-app.post("/flight/", upload.none(), (req, res) => {
+app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
     // Retrieve POST flight data from request body
     var flightCode = req.body.flightCode
     var aircraft = req.body.aircraft
@@ -289,18 +289,39 @@ app.post("/flight/", upload.none(), (req, res) => {
     var embarkDate = req.body.embarkDate
     var travelTime = req.body.travelTime
     var price = req.body.price
-
-    // Function to create a flight in the flight database
-    flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, (err, result) => {
-        if (!err) {
-            console.log("Inserted flightid " + result.insertId)
-            res.status(201).send(JSON.stringify({'flightid': result.insertId }))   // Return error code 201
-        } else {
-            console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error")
-        }
-    })
-
+    // Check if file exists
+    if (!req.file) {
+        console.log("IMAGE NOT FOUND")
+        res.status(500).send("Please upload an image")  // Returns an error if image is not uploaded to POSTMAN form-data
+    } else {
+        // Output the contents of the image file object if upload detected
+        console.log("[IMAGE CONTENTS]")
+        console.log(req.file)
+        // Set the profile pic URL to the file path and link 
+        var flight_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
+        // Function to create a flight in the flight database
+        flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, (err, result) => {
+            // Check if file exists
+            if (!req.file) {
+                console.log("IMAGE NOT FOUND")
+                res.status(500).send("Please upload an image")  // Returns an error if image is not uploaded to POSTMAN form-data
+            } else {
+                // Output the contents of the image file object if upload detected
+                console.log("[IMAGE CONTENTS]")
+                console.log(req.file)
+                // Set the profile pic URL to the file path and link 
+                var profile_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
+            }
+            
+            if (!err) {
+                console.log("Inserted flightid " + result.insertId)
+                res.status(201).send(JSON.stringify({'flightid': result.insertId }))   // Return error code 201
+            } else {
+                console.log("[ERROR DETECTED] 500")
+                res.status(500).send("[500] Unknown Error")
+            }
+        })
+    }
 })
 
 // Endpoint #8: Using the GET method to retrieve flight information travelling from origin to destination airport

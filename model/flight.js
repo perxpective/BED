@@ -11,7 +11,7 @@ const { timeout } = require('nodemon/lib/config')
 var db = require('./databaseConfig.js')
 var flightDB = {
     // Function to add new flight to the flight database
-    newFlight: (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, callback) => {
+    newFlight: (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, callback) => {
         var connection = db.getConnection()
         connection.connect((err) => {
             // Check for errors
@@ -20,9 +20,9 @@ var flightDB = {
                 return callback(err, null)
             } else {
                 // SQL command to insert new flight data into flight table
-                var sql = "insert into sp_air.flight (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price) values (?, ?, ?, ?, ?, ?, ?)"
+                var sql = "insert into sp_air.flight (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url) values (?, ?, ?, ?, ?, ?, ?,?)"
                 console.log(`RUNNING COMMAND: ${sql}`)
-                connection.query(sql, [flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price], (err, result) => {
+                connection.query(sql, [flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url], (err, result) => {
                     connection.end()
                     if (err) {
                         console.log(err)
@@ -168,6 +168,11 @@ var flightDB = {
                 })
             }
         })
+    },
+
+    // Function to get all transfer flights from transfer database
+    getTransfers: () => {
+
     }
 }
 
