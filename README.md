@@ -38,12 +38,12 @@ Database name: sp_air
 
 - promotion - store promotion period dates and discounts
     - promotion id
+    - flight id
     - startDate
     - endDate
     - discount
-    - flight id
 
-## Summary of Endpoints Created
+# Summary of Endpoints Created
 1. Endpoint 1 - POST /users/ - Create a new user
 2. Endpoint 2 - GET /users/ - Get all users from the user database
 3. Endpoint 3 - GET /users/:id - Get user by their id

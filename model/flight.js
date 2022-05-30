@@ -144,35 +144,9 @@ var flightDB = {
             }
         })
     },
-
-    // Function to add a new transfer flight to the transfers database
-    newTransfer: (firstFlightId, secondFlightId, flightCode1, flightCode2, aircraft1, aircraft2, originAirport, transferAirport, destinationAirport, totalPrice, callback) => {
-        var connection = db.getConnection()
-        connection.connect((err) => {
-            if (err) {
-                console.log(err)
-                return callback(err, null)
-            } else {
-                // SQL Command to insert new flights with transfers into the transfer database
-                var sql = "insert into transfer (firstFlightId, secondFlightId, flightCode1, flightCode2, aircraft1, aircraft2, originAirport, transferAirport, destinationAirport, totalPrice) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                connection.query(sql, [firstFlightId, secondFlightId, flightCode1, flightCode2, aircraft1, aircraft2, originAirport, transferAirport, destinationAirport, totalPrice], (err, result) => {
-                    connection.end()
-                    if (err) {
-                        console.log(err)
-                        return callback(err, null)
-                    } else {
-                        console.log(result)
-                        console.table(result)
-                        return callback(null, result)
-                    }
-                })
-            }
-        })
-    },
-
+    
     // Function to get all transfer flights from transfer database
-    getTransfers: () => {
-
+    getTransfers: (originAirportId, destinationAirportId, callback) => {
     }
 }
 
