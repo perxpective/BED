@@ -45,80 +45,21 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                console.log("Connection established!")
-                /*
-                -------------------------------------------------------------------------------------------------
-                SQL command to retrieve airport names from airport table and flight information from flight table
-                -------------------------------------------------------------------------------------------------
-                */
-
-                // SQL Command to create a temporary table to store all retrieve data from flight and airport tables
-                // SQL Line 1: Create a temporary table if it does not exist yet to store origin and destination airport names
-                var SQLclearTable = "create temporary table if not exists find_flight2 (originAirport varchar(45) not null, destinationAirport varchar(45) not null);"
-                console.log(`RUNNING COMMAND: ${SQLclearTable}`)
-                connection.query(SQLclearTable, (err2, result2) => {
-                    if (err2) {
-                        console.log(err2)
-                        return callback(err2, null)
+                // SQL Command to 
+                var sql = `select flightId, flightCode, (select name from airport where airportid = ?) as originAirport, (select name from airport where airportid = ?) as destinationAirport, embarkdate, travelTime, price from flight where flight.originAirport = ? and flight.destinationAirport = ?`
+                connection.query(sql, [originAirportId, destinationAirportId, originAirportId, destinationAirportId], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
                     } else {
-                        // SQL Line 2: Clear table regularly
-                        var SQLcreateTemporaryTable = "truncate table find_flight2;"
-                        console.log(`RUNNING COMMAND: ${SQLcreateTemporaryTable}`)
-                        connection.query(SQLcreateTemporaryTable, (err3, result3) => {
-                            if (err3) {
-                                console.log(err3)
-                                return callback(err3, null)
-                            } else {
-                                // SQL Line 3: Store selected origin airport name in a variable @originAirportVar
-                                var SQLvariable1 = "set @originAirportVar = (select name from airport where airportid = ?);"
-                                console.log(`RUNNING COMMAND: ${SQLvariable1}`)
-                                connection.query(SQLvariable1, [originAirportId], (err4, result4) => {
-                                    if (err4) {
-                                        console.log(err4)
-                                        return callback(err4, null)
-                                    } else {
-                                        // SQL Line 4: Store selected destination airport name in a variable @destinationAirportVar
-                                        var SQLvariable2 = "set @destinationAirportVar = (select name from airport where airportid = ?);"
-                                        console.log(`RUNNING COMMAND: ${SQLvariable2}`)
-                                        connection.query(SQLvariable2, [destinationAirportId], (err5, result5) => {
-                                            if (err5) {
-                                                console.log(err5)
-                                                return callback(err5, null)
-                                            } else {
-                                                // SQL Line 5: Insert the two variables in the temporary table called find_flight2
-                                                var SQLinsertIntoTempTable = "insert into find_flight2 (originAirport, destinationAirport) values (@originAirportVar, @destinationAirportVar);"
-                                                console.log(`RUNNING COMMAND: ${SQLinsertIntoTempTable}`)
-                                                connection.query(SQLinsertIntoTempTable, (err5, result5) => {
-                                                    if (err5) {
-                                                        console.log(err5)
-                                                        return callback(err5, null)
-                                                    } else {
-                                                        // SQL Line 6: Select data from flight and find_flight2 tables to form a joined table
-                                                        var SQLselectTempTable = "select flight.flightid, flight.flightCode, flight.aircraft, find_flight2.originAirport, find_flight2.destinationAirport, flight.embarkDate, flight.travelTime, flight.price from flight, find_flight2 where flight.originAirport = ? and flight.destinationAirport = ?;"
-                                                        console.log(`RUNNING COMMAND: ${SQLselectTempTable}`)
-                                                        connection.query(SQLselectTempTable, [originAirportId, destinationAirportId], (err6, result6) => {
-                                                            connection.end()
-                                                            if (err6) {
-                                                                console.log(err6)
-                                                                return callback(err6, null)
-                                                            } else {
-                                                                console.table(result6)
-                                                                return callback(null, result6)
-                                                            }
-                                                        })
-                                                    }
-                                                })
-                                            }
-                                        })   
-                                    }
-                                })
-                            }
-                        })
+                        return callback(null, result)
                     }
                 })
             }
-        }) 
+        })
     },
+
 
     // Function to delete flights and their related bookings from the database
     deleteFlight: (flightid, callback) => {
@@ -144,9 +85,33 @@ var flightDB = {
             }
         })
     },
-    
+
     // Function to get all transfer flights from transfer database
     getTransfers: (originAirportId, destinationAirportId, callback) => {
+        var connection = db.getConnection()
+        connection.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback(err, null)
+            } else {
+                // SQL statement to delete flight based on flightid
+                var sql = `
+                create temporary table if not exists first_flight (flightid int not null, flightCode varchar(45) not null, aircraft varchar(45) not null, originAirport varchar(45) not null, destinationAirport varchar(45) not null, price float not null);
+                insert into first_flight select flightid, flightCode, aircraft, originAirport, destinationAirport, price from flight where flight.originAirport = ? and flight.destinationAirport != ?;
+                create temporary table if not exists second_flight (flightid int not null, flightCode varchar(45) not null, aircraft varchar(45) not null, originAirport varchar(45) not null, destinationAirport varchar(45) not null, price float not null);
+                insert into second_flight select flightid, flightCode, aircraft, originAirport, destinationAirport, price from flight where flight.destinationAirport = ? and flight.originAirport != ?;
+                select first_flight.flightid as firstFlightId, second_flight.flightid as secondFlightId, first_flight.flightCode as flightCode1, second_flight.flightCode as flightCode2, first_flight.aircraft as aircraft1, second_flight.aircraft as aircraft2, (select name from airport where airportid = first_flight.originAirport) as originAirport, (select name from airport where airportid = second_flight.originAirport) as transferAirport, (select name from airport where airportid = second_flight.destinationAirport) as destinationAirport , sum(first_flight.price + second_flight.price) as totalPrice from first_flight, second_flight where first_flight.destinationAirport = second_flight.originAirport;`
+                connection.query(sql, [originAirportId, destinationAirportId, destinationAirportId, originAirportId], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        return callback(null, result)
+                    }
+                })
+            }
+        })
     }
 }
 

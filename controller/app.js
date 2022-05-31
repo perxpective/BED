@@ -334,7 +334,8 @@ app.get("/flightDirect/:originAirportId/:destinationAirportId", (req, res) => {
     flight.findFlight(originAirportId, destinationAirportId, (err, result) => {
         if (!err) {
             console.log("Found a flight!")
-            res.status(201).send(JSON.stringify(result))
+            console.log(result)
+            res.status(201).send((result[result.length - 1]))
         } else {
             console.log("[ERROR DETECTED]")
             res.status(500).send("[500] Unknown Error")
@@ -385,9 +386,21 @@ app.delete("/flight/:id", (req, res) => {
 
 // Endpoint #11: Retrieve data of all flights from origin airport to destination airport with one transfer
 app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) => {
+
     // Get originAirportId and destinationAirportId from request parameters
     var originAirportId = req.params.originAirportId
     var destinationAirportId = req.params.destinationAirportId
+
+    // Function to get transfers
+    flight.getTransfers(originAirportId, destinationAirportId, (err, result) => {
+        if (err) {
+            res.status(500).send("[500] Unknown Error")
+        } else if ((result[result.length - 1])[0].firstFlightId == null) {
+            res.status(500).send("No transfer flights available from your search query!")
+        } else {
+            res.status(200).send(result[result.length-1])
+        }
+    })
 })
 
 

@@ -23,7 +23,8 @@ var dbconnect = {
             host: "localhost",
             user: "root",
             password: "lightPainting28012004@",     // Enter your own password from your MySQL Workstation
-            database: "sp_air"
+            database: "sp_air",
+            multipleStatements: true
         })
         return connection
     }
