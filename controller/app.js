@@ -62,15 +62,7 @@ BED Assignment CA1
 
     - Endpoint 16 - GET /checkout/:flightid/:classid
 
-2. Search for cheap flights based on origin and destination city
-    > Cheap flight tickets are priced $500 or lower
-    > Flights are filtered based on this condition
-    > Transfer flights are searched separately by the parameter (yes, no)
-    > Yes = Search transfer flights, No = Search flights without transfers
-
-    - Endpoint 17 - GET /searchCheapFlights/:originAirportId/:destinationAirportId/
-
-3. Implementing a mini search engine to search for all flights by airline [GET /searchAirline?airlineCode=]
+2. Implementing a mini search engine to search for all flights by airline [GET /searchAirline/:query]
     > Transfer flights are searched separately
 
 */
@@ -554,11 +546,19 @@ app.get('/checkout/:bookingid/:classid', (req, res) => {
     }
 })
 
-app.get("/searchCheapFlights/:originAirportId/:destinationAirportId/", (req, res) => {
-    
+// Endpoint #17: Using the GET method to query search for flights by airline code
+app.get("/searchAirline/:query", (req, res) => {
+    // Get query string from request parameters
+    searchQuery = "%" + req.params.query + "%"
+    flight.searchFlightByAirline(searchQuery, (err, result) => {
+        if (!err) {
+            res.status(200).send(result)
+        } else {
+            res.status(500).send("[500] Unknown Error")
+        }
+    })
 })
 
-// Endpoint #17:
 
 // Export app over to the main server.js file
 module.exports = app

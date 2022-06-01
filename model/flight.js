@@ -137,6 +137,31 @@ var flightDB = {
                 })
             }
         }) 
+    },
+
+    // Function to search flights by airline code search query 
+    searchFlightByAirline: (searchQuery, callback) => {
+        var connection = db.getConnection()
+        connection.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback(err, null)
+            } else {
+                // SQL statement to delete flight based on flightid
+                var sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where flightCode like ?"
+                connection.query(sql, [searchQuery], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        console.log(result)
+                        console.table(result)
+                        return callback(null, result)
+                    }
+                })
+            }
+        }) 
     }
 }
 
