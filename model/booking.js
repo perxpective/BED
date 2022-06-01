@@ -8,7 +8,7 @@ BED Assignment CA1
 
 // Import SQL database from databaseConfig.js
 var db = require('./databaseConfig.js')
-var bookingDB  ={
+var bookingDB = {
     // Function to create a new booking for a flight in the booking database
     newBooking: (name, passport, nationality, age, userid, flightid, callback) => {
         var connection = db.getConnection()
@@ -34,6 +34,60 @@ var bookingDB  ={
                 }) 
             }
         })
+    },
+
+
+    checkoutBooking: (bookingid, callback) => {
+        var connection = db.getConnection()
+        connection.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback(err, null)
+            } else {
+                console.log("Connection established!")
+                // SQL Command to insert new data into the booking table
+                var sql = "select * from sp_air.booking where bookingid = ?"
+                console.log(`RUNNING COMMAND: ${sql}`)
+                connection.query(sql, [bookingid], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        console.log(result)
+                        console.table(result)
+                        return callback(null, result)
+                    }
+                })
+            }
+        })
+    },
+
+    // Function to get flightid from booking
+    getFlightIdFromBooking: (bookingid, callback) => {
+        var connection = db.getConnection()
+        connection.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback(err, null)
+            } else {
+                console.log("Connection established!")
+                // SQL Command to insert new data into the booking table
+                var sql = "select flightid from sp_air.booking where bookingid = ?"
+                console.log(`RUNNING COMMAND: ${sql}`)
+                connection.query(sql, [bookingid], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        console.log(result)
+                        console.table(result)
+                        return callback(null, result)
+                    }
+                })
+            }
+        })     
     }
 }
 

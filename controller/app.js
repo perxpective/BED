@@ -30,7 +30,6 @@ BED Assignment CA1
 9. Endpoint 9 - POST /booking/:userid/:flightid
 10. Endpoint 10 - DELETE /flight/:id/
 11. Endpoint 11 - GET /transfer/flight/:originAirportId/:destinationAirportId
-12. Endpoint 12 - POST /transfer/flight/
 
 # BONUS REQUIREMENTS FUFILLMENT
 - Additional endpoints related to handling a database for transfer flights
@@ -41,15 +40,14 @@ BED Assignment CA1
     > Feature is only available for user endpoints
 
 - Endpoints related to promotional discounts for certain periods
-    13. Endpoint 13 - POST /promotions/:flightid - Create a new promotion
-    14. Endpoint 14 - GET /promotions - Get all promotions
-    15. Endpoint 15 - GET /promotions/:promotionid - Get promotion by promotionid
-    16. Endpoint 16 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
+    13. Endpoint 12 - POST /promotions/:flightid - Create a new promotion
+    14. Endpoint 13 - GET /promotions - Get all promotions
+    15. Endpoint 14 - GET /promotions/:promotionid - Get promotion by promotionid
+    16. Endpoint 15 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
 
 
 # ADVANCED FEATURES IMPLEMENTATIONS
 1. Checking out booked flights (applying promotional discounts if there are any) [booking table modified from requirements]
-    > Create new checkout table
     > Apply and validate promotions based on date of booking and promotion period
     > User can select a class (First, Business, Economy)
     > Calculate price based on class seat booked
@@ -62,31 +60,38 @@ BED Assignment CA1
     > Final price will be calculated and written to the checkout database
     > Checkout can be retreived to view transcations and payment information
 
-2. Search for cheap flights based on origin and destination city [GET /searchCheapFlights/:originAirportId/:destinationAirportId/:transfer]
+    - Endpoint 16 - GET /checkout/:flightid/:classid
+
+2. Search for cheap flights based on origin and destination city
     > Cheap flight tickets are priced $500 or lower
     > Flights are filtered based on this condition
     > Transfer flights are searched separately by the parameter (yes, no)
     > Yes = Search transfer flights, No = Search flights without transfers
 
-3. Search for all flights by airline [GET /searchAirline/:airlineCode/:transfer]
-    > Transfer flights are searched separately
+    - Endpoint 17 - GET /searchCheapFlights/:originAirportId/:destinationAirportId/
 
-- Searching for cheap flights based on origin and destination city [GET /searchCheapFlights/:originAirportId/:destinationAirportId]
+3. Implementing a mini search engine to search for all flights by airline [GET /searchAirline?airlineCode=]
+    > Transfer flights are searched separately
 
 */
 
 // Libraries and Objects to import
 var express = require("express")                    // Loading the express library
 var app = express()                                 // Creation of the express instance
+
+// Import codes from other model files
 var user = require("../model/user.js")              // Load code from user.js
 var airport = require("../model/airport.js")        // Load code from airport.js
 var flight = require("../model/flight.js")          // Load code from flight.js
 var booking = require("../model/booking.js")        // Load code from booking.js
+var promotion = require("../model/promotion.js")    // Load code from promotion.js
+
 var bodyParser = require("body-parser")             // Load body parser library
 
 
 var urlencodedParser = bodyParser.urlencoded({extended: true})      // Parse HTTP POST data
 const multer = require("multer")                                    // Load multer library for image file uploads
+const { getPromotionByFlightId } = require("../model/promotion.js")
 
 
 // Multer: middleware responsible for handling multipart/form-data used for uploading images to database
@@ -156,7 +161,7 @@ app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
             if (!err) {
                 // Responds by sending the result insertId (primary key) via a JSON string 
                 console.log("Inserted userid: " + result.insertId)
-                res.status(201).send(JSON.stringify({'userid': result.insertId}))   // Return error code 201
+                res.status(201).send({'userid': result.insertId})   // Return error code 201
             } else if (err.errno == 1062) {
                 // Checking for duplicate error of input data
                 console.log("[ERROR DETECTED] 422")
@@ -315,7 +320,7 @@ app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
             
             if (!err) {
                 console.log("Inserted flightid " + result.insertId)
-                res.status(201).send(JSON.stringify({'flightid': result.insertId }))   // Return error code 201
+                res.status(201).send({'flightid': result.insertId })   // Return error code 201
             } else {
                 console.log("[ERROR DETECTED] 500")
                 res.status(500).send("[500] Unknown Error")
@@ -344,7 +349,7 @@ app.get("/flightDirect/:originAirportId/:destinationAirportId", (req, res) => {
 })
 
 // Endpoint #9: Using the POST method to add a new booking to the booking database
-app.post("/booking/:userid/:flightid", upload.single(), (req, res) => {
+app.post("/booking/:userid/:flightid", upload.none(), (req, res) => {
     // Get request parameters
     var userid = req.params.userid
     var flightid = req.params.flightid
@@ -398,22 +403,162 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
         } else if ((result[result.length - 1])[0].firstFlightId == null) {
             res.status(500).send("No transfer flights available from your search query!")
         } else {
+            console.table(result[result.length - 1])
             res.status(200).send(result[result.length-1])
         }
     })
 })
 
+// Endpoint #12: Using the POST method to create a new promotion on the promotion database
+app.post("/promotion/:flightid", upload.none(), (req, res) => {
+    // Get flightid from request parameters
+    var flightid = req.params.flightid
 
-// Endpoint #13: Using the POST method to create a new promotion on the promotion database
-app.post("/promotion/", (req, res) => {
+    // Get promotion information from request body data
+    var startDate = req.body.startDate
+    var endDate = req.body.endDate
+    var discount = req.body.discount
+
     // Function to add a new promotion and their dates into the promotion database
-    if (!err) {
-        res.status(201).send(result)
+    promotion.newPromotion(flightid, startDate, endDate, discount, (err, result) => {
+        if (!err) {
+            res.status(201).send({"promotionid": result.insertId})
+        } else if (err.errno == 1292) {
+            res.status(500).send("Invalid data type received!")
+        } else if (err.errno == 1452) {
+            res.status(500).send("Cannot create a promotion for a nonexistent flight!")
+        } else {
+            res.status(500).send("[500] Unknown Error")
+        }
+    })
+})
+
+// Endpoint #13: Using the GET method to get all promotion information from the promotion database
+app.get('/promotion/', (req, res) => {
+    // Function to get all promotion data from the promotion table
+    promotion.getAllPromotions((err, result) => {
+        if (!err) {
+            res.status(201).send(result)
+        } else {
+            res.status(500).send("[500] Unknown Error")
+        }
+    })
+})
+
+// Endpoint #14: Using the GET method to get a promotion by its id
+app.get('/promotion/:promotionid', (req, res) => {
+    // Get request parameters
+    var promotionid = req.params.promotionid
+
+    // Function to get promotion data from promotion table by promotionid
+    promotion.getPromotionById(promotionid, (err, result) => {
+        if (!err) {
+            res.status(201).send(result)
+        } else {
+            res.status(500).send("[500] Unknown Error")
+        }
+    })
+})
+
+// Endpoint #15: Using the DELETE method to delete a promotion by promotionid
+app.delete('/promotion/:promotionid', (req, res) => {
+    // Get request parameters
+    var promotionid = req.params.promotionid
+
+    // Function to delete promotion by promotionid
+    promotion.deletePromotionById(promotionid, (err, result) => {
+        if (!err) {
+            res.status(200).send("Successfully deleted a promotion!")
+        } else {
+            res.status(500).send("[500] Unknown Error")
+        }
+    })
+})
+
+// Endpoint #16: Using the GET method to checkout an exisiting booking 
+app.get('/checkout/:bookingid/:classid', (req, res) => {
+    // Get bookingid from request parameters
+    var bookingid = req.params.bookingid
+    var classid = req.params.classid
+
+    // List of seat classes for a flight
+    classList = ["First", "Business", "Economy"]
+    classCost = [2, 1.5, 1]
+    if (classid > classList.length || classid <= 0) {
+        res.status(500).send("Invalid class")
     } else {
-        res.status(500).send("[500] Unknown Error")
+
+        // Function to retrieve booking information from the booking database
+        booking.checkoutBooking(bookingid, (err, result) => {
+            if (err) {
+                res.status(500).send("[500] Unknown Error")
+            } else if (result[0] == undefined) {
+                res.status(500).send("Booking does not exist")
+            } else {
+                // Get seat class string from list by classid index
+                seatClass = classList[classid-1]
+
+                // Get flightid from bookingid selection
+                booking.getFlightIdFromBooking(bookingid, (err2, result2) => {
+                    if (err2) {
+                        res.status(500).send("[500] Unknown Error")
+                    } else if (result2[0] == undefined) {
+                        console.log("NO PROMOTIONS FOR THIS FLIGHT")
+                    } else {
+                        var flightid = result2[0]["flightid"]
+                        console.log(flightid)
+                        // Get price of flight from flightid in booking
+                        flight.getFlightPriceById(flightid, (err3, result3) => {
+                            if (err3) {
+                                res.status(500).send("[500] Unknown Error")
+                            } else {
+                                flightPrice = result3[0]["price"]
+                                // Check for promotions for flight
+                                promotion.getPromotionByFlightId(flightid, (err4, result4) => {
+                                    if (err4) {
+                                        res.status(500).send("[500] Unknown Error")
+                                    } else if (result4[0] == undefined) {
+                                        var discount = 0
+                                    } else {
+                                        // Get start, end and today dates 
+                                        var bookingDate = new Date(result[0]["booked_at"])
+                                        var startDate = new Date(result4[0]["startDate"])
+                                        var endDate = new Date(result4[0]["endDate"])
+        
+                                        // Check dates in range
+                                        if (startDate <= bookingDate && today <= endDate) {
+                                            var discount = result3[0]["discount"]
+                                        } else {
+                                            var discount = 0
+                                        }
+                                        
+                                    }
+                                    var finalPrice = flightPrice * (1 - discount) * (classCost[classid-1])
+                                    // Compile all booking data for checkout in an object to send to POSTMAN
+                                    checkoutObject = {
+                                        "booking": result,
+                                        "class": seatClass,
+                                        "discount": discount,
+                                        "finalPrice": finalPrice
+                                    }
+
+                                    res.status(200).send(checkoutObject)
+                                })
+                            }
+                        })
+
+                    }
+                })
+            }
+        })
     }
 })
 
+app.get("/searchCheapFlights/:originAirportId/:destinationAirportId/", (req, res) => {
+    
+})
+
+// Endpoint #17:
 
 // Export app over to the main server.js file
 module.exports = app
