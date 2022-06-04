@@ -3,68 +3,7 @@ BED Assignment CA1
 -   Name: Lee Quan Jun Ervin
 -   Class: DISM/FT/2B/21
 -   Filename: app.js
--   Description: This file is where all the endpoints are stored (Tested using POSTMAN)
-
-# TABLES CREATED
-- user
-- flight
-- airport
-- booking
-- promotion
-- transfer
-
-# FOREIGN KEYS USED
-.
-.
-.
-
-# SUMMARY OF ENDPOINTS CREATED
-1. Endpoint 1 - POST /users/
-2. Endpoint 2 - GET /users/
-3. Endpoint 3 - GET /users/:id
-4. Endpoint 4 - PUT /users/:id
-5. Endpoint 5 - POST /airport
-6. Endpoint 6 - GET /airport
-7. Endpoint 7 - POST /flight
-8. Endpoint 8 - GET /flightDirect/:originAirportId/:destinationAirportId
-9. Endpoint 9 - POST /booking/:userid/:flightid
-10. Endpoint 10 - DELETE /flight/:id/
-11. Endpoint 11 - GET /transfer/flight/:originAirportId/:destinationAirportId
-
-# BONUS REQUIREMENTS FUFILLMENT
-- Additional endpoints related to handling a database for transfer flights
-
-- Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
-    > File size limited to 1MB, otherwise error will be outputted
-    > Only JPG and PNG files are accepted, using fileFilter function in Multer object and comparing with file mimetype
-    > Feature is only available for user endpoints
-
-- Endpoints related to promotional discounts for certain periods
-    13. Endpoint 12 - POST /promotions/:flightid - Create a new promotion
-    14. Endpoint 13 - GET /promotions - Get all promotions
-    15. Endpoint 14 - GET /promotions/:promotionid - Get promotion by promotionid
-    16. Endpoint 15 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
-
-
-# ADVANCED FEATURES IMPLEMENTATIONS
-1. Checking out booked flights (applying promotional discounts if there are any) [booking table modified from requirements]
-    > Apply and validate promotions based on date of booking and promotion period
-    > User can select a class (First, Business, Economy)
-    > Calculate price based on class seat booked
-        + Flight prices are default economy
-        + Business class seats will be 30% more expensive than economy class
-        + First class seats will be 100% more expensive than economy class seats
-        + Users will book the same class seat for both transfer flights
-        
-    > Class is inputted from request body and will appear in the checkout
-    > Final price will be calculated and written to the checkout database
-    > Checkout can be retreived to view transcations and payment information
-
-    - Endpoint 16 - GET /checkout/:flightid/:classid
-
-2. Implementing a mini search engine to search for all flights by airline [GET /searchAirline/:query]
-    > Transfer flights are searched separately
-
+-   Description: This node.js script is where all the express API endpoints are stored (Tested using POSTMAN)
 */
 
 // Libraries and Objects to import
@@ -72,18 +11,16 @@ var express = require("express")                    // Loading the express libra
 var app = express()                                 // Creation of the express instance
 
 // Import codes from other model files
-var user = require("../model/user.js")              // Load code from user.js
-var airport = require("../model/airport.js")        // Load code from airport.js
-var flight = require("../model/flight.js")          // Load code from flight.js
-var booking = require("../model/booking.js")        // Load code from booking.js
-var promotion = require("../model/promotion.js")    // Load code from promotion.js
+const user = require("../model/user.js")              // Load code from user.js
+const airport = require("../model/airport.js")        // Load code from airport.js
+const flight = require("../model/flight.js")          // Load code from flight.js
+const booking = require("../model/booking.js")        // Load code from booking.js
+const promotion = require("../model/promotion.js")    // Load code from promotion.js
 
-var bodyParser = require("body-parser")             // Load body parser library
+const bodyParser = require("body-parser")             // Load body parser library
 
-
-var urlencodedParser = bodyParser.urlencoded({extended: true})      // Parse HTTP POST data
+const urlencodedParser = bodyParser.urlencoded({extended: true})    // Parse HTTP POST data
 const multer = require("multer")                                    // Load multer library for image file uploads
-const { getPromotionByFlightId } = require("../model/promotion.js")
 
 
 // Multer: middleware responsible for handling multipart/form-data used for uploading images to database
@@ -109,6 +46,7 @@ const upload = multer({
     // Function to decide which files to accept or reject based on file types supported
     // Outputs errors into content if file is too large or invalid image file format 
     fileFilter: (req, file, callback) => {
+        // List of image file types allowed
         filetypes = ['image/png', 'image/jpeg', 'image/jpg']
         if (filetypes.includes(file.mimetype)) {
             callback(null, true)
@@ -123,6 +61,7 @@ const upload = multer({
 app.use(bodyParser.json())          // Parse application/json
 app.use(express.json())
 app.use(urlencodedParser)           // Parse application/x-www-form-urlencoded
+
 
 // Endpoint #1: Using the POST method to add a new user to the database
 app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
@@ -141,7 +80,7 @@ app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
     // Check if file exists
     if (!req.file) {
         console.log("IMAGE NOT FOUND")
-        res.status(500).send("Please upload an image")
+        res.status(500).send({ "Error Message": "Please upload an image!" })
     } else {
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
@@ -158,10 +97,10 @@ app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
                 // Checking for duplicate error of input data
                 console.log("[ERROR DETECTED] 422")
                 console.log("[422] Duplicate Entry Detected.")
-                res.status(422).send("[422] Unprocessable Entity (Duplicated Entry Detected)")
+                res.status(422).send({"Error Message":"[422] Unprocessable Entity (Duplicated Entry Detected)"})
             } else {
                 console.log("[ERROR DETECTED] 500")
-                res.status(500).send("[500] Unknown Error")
+                res.status(500).send({ "Error Message": "[500] Unknown Error" })
             }
         })
     }
@@ -176,7 +115,7 @@ app.get("/users/", (req, res) => {
             res.status(200).send(result)    // Return error code 200 and send the result over to POSTMAN
         } else {
             console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error.")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -191,7 +130,7 @@ app.get("/users/:id", (req, res) => {
             res.status(200).send(result)    // Return error code 200 and send the result over to POSTMAN
         } else {
             console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -218,6 +157,7 @@ app.put("/users/:id", upload.single('profile_pic_url'), (req, res) => {
         // Output the contents of the image file object if upload detected
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
+
         // Set the profile pic URL to the file path and link 
         var profile_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
     }
@@ -233,7 +173,7 @@ app.put("/users/:id", upload.single('profile_pic_url'), (req, res) => {
             res.status(422).send("[422] Unprocessable Entity (Duplicated Entry Detected)")
         } else {
             console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -255,10 +195,10 @@ app.post("/airport/", (req, res) => {
             // Output error code 422 if duplicate entries found in database
             console.log("[ERROR DETECTED] 422")
             console.log("[422] Duplicate Entry Detected.")  
-            res.status(422).send("[422] Unprocessable Entity (Duplicated Entry Detected)")
+            res.status(422).send({"Error Message" : "[422] Unprocessable Entity (Duplicated Entry Detected)"})
         } else {
             console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -271,7 +211,7 @@ app.get("/airport/", (req, res) => {
             res.status(200).send(result)
         } else {
             console.log("[ERROR DETECTED] 500")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -298,24 +238,12 @@ app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
         var flight_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
         // Function to create a flight in the flight database
         flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, (err, result) => {
-            // Check if file exists
-            if (!req.file) {
-                console.log("IMAGE NOT FOUND")
-                res.status(500).send("Please upload an image")  // Returns an error if image is not uploaded to POSTMAN form-data
-            } else {
-                // Output the contents of the image file object if upload detected
-                console.log("[IMAGE CONTENTS]")
-                console.log(req.file)
-                // Set the profile pic URL to the file path and link 
-                var profile_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
-            }
-            
             if (!err) {
                 console.log("Inserted flightid " + result.insertId)
                 res.status(201).send({'flightid': result.insertId })   // Return error code 201
             } else {
                 console.log("[ERROR DETECTED] 500")
-                res.status(500).send("[500] Unknown Error")
+                res.status(500).send({ "Error Message": "[500] Unknown Error" })
             }
         })
     }
@@ -335,7 +263,7 @@ app.get("/flightDirect/:originAirportId/:destinationAirportId", (req, res) => {
             res.status(201).send((result[result.length - 1]))
         } else {
             console.log("[ERROR DETECTED]")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -358,10 +286,10 @@ app.post("/booking/:userid/:flightid", upload.none(), (req, res) => {
             res.status(201).send({bookingId: `${result.insertId}`})
         } else if (err.errno == 1452) {
             console.log("Foreign Key Contraint Failed!")
-            res.status(500).send("[500] Foreign Key Constraint Failed")
+            res.status(500).send({ "Error Message": "Foreign Key Error" })
         } else {
             console.log("[ERROR DETECTED]")
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -376,7 +304,7 @@ app.delete("/flight/:id", (req, res) => {
         if (!err) {
             res.status(200).send({"Message":"Deletion Successful!"})
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -391,9 +319,9 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
     // Function to get transfers
     flight.getTransfers(originAirportId, destinationAirportId, (err, result) => {
         if (err) {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         } else if ((result[result.length - 1])[0].firstFlightId == null) {
-            res.status(500).send("No transfer flights available from your search query!")
+            res.status(500).send({ "Error Message": "No transfer flights available from your search query!" })
         } else {
             console.table(result[result.length - 1])
             res.status(200).send(result[result.length-1])
@@ -416,11 +344,11 @@ app.post("/promotion/:flightid", upload.none(), (req, res) => {
         if (!err) {
             res.status(201).send({"promotionid": result.insertId})
         } else if (err.errno == 1292) {
-            res.status(500).send("Invalid data type received!")
+            res.status(500).send({ "Error Message": "Invalid Data Type Received!" })
         } else if (err.errno == 1452) {
-            res.status(500).send("Cannot create a promotion for a nonexistent flight!")
+            res.status(500).send({ "Error Message": "Cannot create promotion for nonexistent flight!" })
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -432,7 +360,7 @@ app.get('/promotion/', (req, res) => {
         if (!err) {
             res.status(201).send(result)
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -447,7 +375,7 @@ app.get('/promotion/:promotionid', (req, res) => {
         if (!err) {
             res.status(201).send(result)
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
@@ -462,30 +390,42 @@ app.delete('/promotion/:promotionid', (req, res) => {
         if (!err) {
             res.status(200).send("Successfully deleted a promotion!")
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
 })
 
-// Endpoint #16: Using the GET method to checkout an exisiting booking 
-app.get('/checkout/:bookingid/:classid', (req, res) => {
+// Endpoint #16: Using the GET method to checkout an existing booking 
+app.get('/checkout/:bookingid', (req, res) => {
     // Get bookingid from request parameters
     var bookingid = req.params.bookingid
-    var classid = req.params.classid
+
+    // Get quantity from request body
+    var quantity = req.body.quantity
+    var classid = req.body.class    // classid: 1 for First, 2 for Business, 3 for Economy
 
     // List of seat classes for a flight
     classList = ["First", "Business", "Economy"]
+
+    /*
+    List of values to multiply starting price of booked flight with
+    - First class seats are 2x the default price
+    - Business class seats are 1.5x the default price
+    - Economy class seats cost the default price 
+    */ 
     classCost = [2, 1.5, 1]
-    if (classid > classList.length || classid <= 0) {
-        res.status(500).send("Invalid class")
+
+    // Check if the classid given is in the range of the 3 list values
+    if (classid > classList.length || classid <= 0 || classid == undefined) {
+        res.status(500).send({ "Error Message": "Invalid Class" })
     } else {
 
         // Function to retrieve booking information from the booking database
         booking.checkoutBooking(bookingid, (err, result) => {
             if (err) {
-                res.status(500).send("[500] Unknown Error")
-            } else if (result[0] == undefined) {
-                res.status(500).send("Booking does not exist")
+                res.status(500).send({ "Error Message": "[500] Unknown Error" })
+            } else if (result[0] == undefined) {    // Return an error if the booking does not exist in the database
+                res.status(500).send({ "Error Message": "Booking does not exist" })
             } else {
                 // Get seat class string from list by classid index
                 seatClass = classList[classid-1]
@@ -493,22 +433,26 @@ app.get('/checkout/:bookingid/:classid', (req, res) => {
                 // Get flightid from bookingid selection
                 booking.getFlightIdFromBooking(bookingid, (err2, result2) => {
                     if (err2) {
-                        res.status(500).send("[500] Unknown Error")
+                        res.status(500).send({ "Error Message": "[500] Unknown Error" })
                     } else if (result2[0] == undefined) {
+                        // Output to check if there are no promotions for the selected flight
                         console.log("NO PROMOTIONS FOR THIS FLIGHT")
                     } else {
+                        // Get flightid from result2
                         var flightid = result2[0]["flightid"]
-                        console.log(flightid)
+
                         // Get price of flight from flightid in booking
                         flight.getFlightPriceById(flightid, (err3, result3) => {
                             if (err3) {
-                                res.status(500).send("[500] Unknown Error")
+                                res.status(500).send({ "Error Message": "[500] Unknown Error" })
                             } else {
-                                flightPrice = result3[0]["price"]
+                                // Store flight price into flightPrice variable
+                                var flightPrice = result3[0]["price"]
+
                                 // Check for promotions for flight
                                 promotion.getPromotionByFlightId(flightid, (err4, result4) => {
                                     if (err4) {
-                                        res.status(500).send("[500] Unknown Error")
+                                        res.status(500).send({ "Error Message": "[500] Unknown Error" })
                                     } else if (result4[0] == undefined) {
                                         var discount = 0
                                     } else {
@@ -519,19 +463,21 @@ app.get('/checkout/:bookingid/:classid', (req, res) => {
         
                                         // Check dates in range
                                         if (startDate <= bookingDate && today <= endDate) {
+                                            // Apply discount if the booking date is within the promotion period
                                             var discount = result3[0]["discount"]
                                         } else {
                                             var discount = 0
                                         }
                                         
                                     }
-                                    var finalPrice = flightPrice * (1 - discount) * (classCost[classid-1])
+                                    var finalPrice = flightPrice * (1 - discount) * (classCost[classid-1]) * quantity
                                     // Compile all booking data for checkout in an object to send to POSTMAN
                                     checkoutObject = {
                                         "booking": result,
                                         "class": seatClass,
                                         "discount": discount,
-                                        "finalPrice": finalPrice
+                                        "finalPrice": finalPrice,
+                                        "quantity": quantity
                                     }
 
                                     res.status(200).send(checkoutObject)
@@ -547,16 +493,40 @@ app.get('/checkout/:bookingid/:classid', (req, res) => {
 })
 
 // Endpoint #17: Using the GET method to query search for flights by airline code
-app.get("/searchAirline/:query", (req, res) => {
+app.get("/searchAirline", (req, res) => {
     // Get query string from request parameters
-    searchQuery = "%" + req.params.query + "%"
+    searchQuery = "%" + req.query.query + "%"
+
+    // Initiate function to search airline by airline code (keyword from user)
     flight.searchFlightByAirline(searchQuery, (err, result) => {
         if (!err) {
             res.status(200).send(result)
         } else {
-            res.status(500).send("[500] Unknown Error")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
     })
+})
+
+// Endpoint #18: Using the GET method to search for flights within price range
+app.get("/flights/price", (req, res) => {
+    // Get request parameters (minimum price and maximum price)
+    min = req.query.min
+    max = req.query.max
+
+    // Return error message if beither min and max price is specified by the user
+    if (min == '' && max == '') {
+        res.status(500).send({"Error Message":"Please specify price ranges!" })
+    } else {
+        // Initiate the function to search flights based on given price range by user
+        flight.searchFlightsByPriceRange(min, max, (err, result) => {
+            if (!err) {
+                // Send results to POSTMAN
+                res.status(200).send(result)
+            } else {
+                res.status(500).send({"Error Message":"[500] Unknown Error"})
+            }
+        })
+    }
 })
 
 

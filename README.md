@@ -43,6 +43,13 @@ Database name: sp_air
     - endDate
     - discount
 
+# Foreign Keys
+- airport.airportid = flight.originAirport and flight.destinationAirport
+- flight.flightid = booking.flightid
+- user.userid = booking.userid
+- user.username = booking.name
+- flight.flightid = promotion.flightid
+
 # Summary of Endpoints Created
 1. Endpoint 1 - POST /users/ - Create a new user
 2. Endpoint 2 - GET /users/ - Get all users from the user database
@@ -55,7 +62,6 @@ Database name: sp_air
 9. Endpoint 9 - POST /booking/:userid/:flightid - Add a new booking to the booking database
 10. Endpoint 10 - DELETE /flight/:id/ - Delete a flight by its id
 11. Endpoint 11 - GET /transfer/flight/:originAirportId/:destinationAirportId - Get transfer flights to destination
-12. Endpoint 12 - POST /transfer/flight - Add new flights with connections (transfers)
 
 # Bonus Requirement Fufillment
 - Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
@@ -65,29 +71,33 @@ Database name: sp_air
     - Uploaded files can be found under the uploads folder
 
 - Endpoints related to promotional discounts for certain periods
-    1. Endpoint 13 - POST /promotions/:flightid - Create a new promotion
-    2. Endpoint 14 - GET /promotions - Get all promotions
-    3. Endpoint 15 - GET /promotions/:promotionid - Get promotion by promotionid
-    4. Endpoitn 16 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
+    - Retrieves flightid and cross references promotion table to check if promotion exists for the flight
+    - Checks if promotion applicable for flight by checking if booking date within promotion period, if not no discount
+    - Applies discount if there is promotion for flight within promotion period
+
+    1. Endpoint 12 - POST /promotions/:flightid - Create a new promotion
+    2. Endpoint 13 - GET /promotions - Get all promotions
+    3. Endpoint 14 - GET /promotions/:promotionid - Get promotion by promotionid
+    4. Endpoint 15 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
 
 # Advanced Features
 - Checkout Feature
+    - Endpoint 16 - GET /checkout/:bookingid
+    - Check if booking exists to be checked out
     - Gives user option to select flight class in their booked flight (Economy, Business, First)
         - Standard price for flights is for Economy Class
         - Business Class tickets cost 50% more than Economy Class tickets
-        - First Class tickets cost 100% more than Economy Class tickes
-        - Users can enter the quantity desired
-        - Assumption is that the users book the same class for both flights with transfers
-        - Cheap flight tickets are priced $500 or lower
-        - Flights are filtered based on this condition
-        - Transfer flights are searched separately by the parameter (yes, no)
-        - Yes = Search transfer flights, No = Search flights without transfers
+        - First Class tickets cost 100% more than Economy Class tickets
+    - Users can indicate quantity of tickets (must be for the same class)
+    - Final price will be calculated, taking into account discounts, class and quantity
     - Checkout information will be displayed and resets every time a new checkout is made
 
-- Searching for cheap flights based on origin and destination airport
-    - Transfer flights are searched separately
-    - Standard prices that are $500 and below are considered cheap
-
 - Searching for flights based on airline
-    - Transfer flights with at least one of the airlines will also be shown but is also searched separately
+    - Endpoint 17 - GET /searchAirline?query=
     - Shows all the flights offered by the airline (all origin and destination cities)
+
+- Searching for flights between certain ranges user specifies
+    - Endpoint 18 - GET /flights/price?min=&max=
+    - Minimum and maximum range to be specified by the user in the body
+
+

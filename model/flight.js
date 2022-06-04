@@ -147,9 +147,44 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL statement to delete flight based on flightid
+                // SQL statement to select flight by airline code
                 var sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where flightCode like ?"
                 connection.query(sql, [searchQuery], (err, result) => {
+                    connection.end()
+                    if (err) {
+                        console.log(err)
+                        return callback(err, null)
+                    } else {
+                        console.log(result)
+                        console.table(result)
+                        return callback(null, result)
+                    }
+                })
+            }
+        }) 
+    },
+
+    // Function to select flight according to range user sets
+    searchFlightsByPriceRange: (min, max, callback) => {
+        var connection = db.getConnection()
+        connection.connect((err) => {
+            if (err) {
+                console.log(err)
+                return callback(err, null)
+            } else {
+                
+                if (max == '' && min !== '') {          // If maximum price is given and minimum price is not given
+                    sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where price >= ?"
+                    array = [min]
+                } else if (min == '' && max !== '') {   // If minimum price is given but maximum price is not given
+                    sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where price <= ?"
+                    array = [max]
+                } else if (max !== '' && min !== '') {  // If both maximum and minimum price is given by the user
+                    sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where price between ? and ?"
+                    array = [min, max]
+                }
+
+                connection.query(sql, array, (err, result) => {
                     connection.end()
                     if (err) {
                         console.log(err)
