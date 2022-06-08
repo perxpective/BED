@@ -190,7 +190,7 @@ app.post("/airport/", (req, res) => {
     // Initiate addAirport function to add new airport data into airport table
     airport.addAirport(name, country, description, (err, result) => {
         if (!err) {
-            res.status(204).send(result)
+            res.status(204).send()
         } else if (err.errno == 1062) {
             // Output error code 422 if duplicate entries found in database
             console.log("[ERROR DETECTED] 422")
@@ -243,7 +243,7 @@ app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
                 res.status(201).send({'flightid': result.insertId })   // Return error code 201
             } else {
                 console.log("[ERROR DETECTED] 500")
-                res.status(500).send({ "Error Message": "[500] Unknown Error" })
+                res.status(500).send({ "Error Message": "Airport does not exist!" })
             }
         })
     }
@@ -260,7 +260,7 @@ app.get("/flightDirect/:originAirportId/:destinationAirportId", (req, res) => {
         if (!err) {
             console.log("Found a flight!")
             console.log(result)
-            res.status(201).send((result[result.length - 1]))
+            res.status(200).send((result[result.length - 1]))
         } else {
             console.log("[ERROR DETECTED]")
             res.status(500).send({ "Error Message": "[500] Unknown Error" })
@@ -286,7 +286,7 @@ app.post("/booking/:userid/:flightid", upload.none(), (req, res) => {
             res.status(201).send({bookingId: `${result.insertId}`})
         } else if (err.errno == 1452) {
             console.log("Foreign Key Contraint Failed!")
-            res.status(500).send({ "Error Message": "Foreign Key Error" })
+            res.status(500).send({ "Error Message": "Flight ID, Name or user ID does not exist in the database!" })
         } else {
             console.log("[ERROR DETECTED]")
             res.status(500).send({ "Error Message": "[500] Unknown Error" })
@@ -388,7 +388,7 @@ app.delete('/promotion/:promotionid', (req, res) => {
     // Function to delete promotion by promotionid
     promotion.deletePromotionById(promotionid, (err, result) => {
         if (!err) {
-            res.status(200).send("Successfully deleted a promotion!")
+            res.status(200).send({"Message":"Successfully deleted a promotion!"})
         } else {
             res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
@@ -500,7 +500,7 @@ app.get("/searchAirline", (req, res) => {
     // Initiate function to search airline by airline code (keyword from user)
     flight.searchFlightByAirline(searchQuery, (err, result) => {
         if (!err) {
-            res.status(200).send(result)
+            res.status(201).send(result)
         } else {
             res.status(500).send({ "Error Message": "[500] Unknown Error" })
         }
@@ -521,7 +521,7 @@ app.get("/flights/price", (req, res) => {
         flight.searchFlightsByPriceRange(min, max, (err, result) => {
             if (!err) {
                 // Send results to POSTMAN
-                res.status(200).send(result)
+                res.status(201).send(result)
             } else {
                 res.status(500).send({"Error Message":"[500] Unknown Error"})
             }

@@ -67,7 +67,7 @@ Database name: sp_air
 - Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
     - File size limited to 1MB, otherwise error will be outputted
     - Only JPG and PNG files are accepted, using fileFilter function in Multer object and comparing with file mimetype
-    - Feature is only available for user endpoints
+    - Feature is only available for user and flight endpoints
     - Uploaded files can be found under the uploads folder
 
 - Endpoints related to promotional discounts for certain periods
