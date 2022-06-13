@@ -101,6 +101,7 @@ var flightDB = {
                 create temporary table if not exists second_flight (flightid int not null, flightCode varchar(45) not null, aircraft varchar(45) not null, originAirport varchar(45) not null, destinationAirport varchar(45) not null, price float not null);
                 insert into second_flight select flightid, flightCode, aircraft, originAirport, destinationAirport, price from flight where flight.destinationAirport = ? and flight.originAirport != ?;
                 select first_flight.flightid as firstFlightId, second_flight.flightid as secondFlightId, first_flight.flightCode as flightCode1, second_flight.flightCode as flightCode2, first_flight.aircraft as aircraft1, second_flight.aircraft as aircraft2, (select name from airport where airportid = first_flight.originAirport) as originAirport, (select name from airport where airportid = second_flight.originAirport) as transferAirport, (select name from airport where airportid = second_flight.destinationAirport) as destinationAirport , sum(first_flight.price + second_flight.price) as totalPrice from first_flight, second_flight where first_flight.destinationAirport = second_flight.originAirport;`
+                
                 connection.query(sql, [originAirportId, destinationAirportId, destinationAirportId, originAirportId], (err, result) => {
                     connection.end()
                     if (err) {

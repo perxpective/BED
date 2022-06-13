@@ -451,35 +451,53 @@ app.get('/checkout/:bookingid', (req, res) => {
 
                                 // Check for promotions for flight
                                 promotion.getPromotionByFlightId(flightid, (err4, result4) => {
-                                    if (err4) {
-                                        res.status(500).send({ "Error Message": "[500] Unknown Error" })
-                                    } else if (result4[0] == undefined) {
-                                        var discount = 0
-                                    } else {
-                                        // Get start, end and today dates 
-                                        var bookingDate = new Date(result[0]["booked_at"])
-                                        var startDate = new Date(result4[0]["startDate"])
-                                        var endDate = new Date(result4[0]["endDate"])
-        
-                                        // Check dates in range
-                                        if (startDate <= bookingDate && today <= endDate) {
-                                            // Apply discount if the booking date is within the promotion period
-                                            var discount = result3[0]["discount"]
-                                        } else {
-                                            var discount = 0
+
+                                    // Get date of booking from result
+                                    var bookingDate = new Date(result[0]["booked_at"])
+
+                                    // Declare function to check all promotions for a flight
+                                    function checkPromotions(result, bookingDate) {
+                                        // Run a for loop to check multiple promotions for the flight
+                                        // Check if date of booking is within promotiong period
+                                        for (var i = 0; i < result.length; i++) {
+                                            // Get start, end and today dates of promotion
+                                            var startDate = new Date(result[i]["startDate"])
+                                            var endDate = new Date(result[i]["endDate"])
+
+                                            // Check dates in range
+                                            if (startDate <= bookingDate && bookingDate <= endDate) {
+                                                // Apply discount if the booking date is within the promotion period
+                                                var discount = result[i]["discount"]
+                                                break   // Break loop if discount detected in promotion
+
+                                            } else {
+                                                // Otherwise, discount will be zero
+                                                var discount = 0
+                                            }
                                         }
-                                        
-                                    }
-                                    var finalPrice = flightPrice * (1 - discount) * (classCost[classid-1]) * quantity
-                                    // Compile all booking data for checkout in an object to send to POSTMAN
-                                    checkoutObject = {
-                                        "booking": result,
-                                        "class": seatClass,
-                                        "discount": discount,
-                                        "finalPrice": finalPrice,
-                                        "quantity": quantity
+
+                                        return discount
                                     }
 
+                                    if (err4) {
+                                        res.status(500).send({ "Error Message": "[500] Unknown Error" })
+                                    } else {
+                                        // Run function to check for discounts from promotions of flight
+                                        discount = checkPromotions(result4, bookingDate)
+                                    }
+
+                                    // Calculate the final price of flight tickets, taking into account quantity, discounts and class seat
+                                    var finalPrice = flightPrice * (1 - discount) * (classCost[classid-1]) * quantity
+
+                                    // Compile all booking data for checkout in an object to send to POSTMAN
+                                    checkoutObject = {
+                                        "booking": result,          // Booking information
+                                        "class": seatClass,         // Seat class
+                                        "discount": discount,       // Discounts from promotions if any (otherwise, 0)
+                                        "finalPrice": finalPrice,   // Final calculated price
+                                        "quantity": quantity        // Number of tickets booked by the user
+                                    }
+                                    // Send the compiled object to POSTMAN for checkout
                                     res.status(200).send(checkoutObject)
                                 })
                             }
@@ -510,10 +528,10 @@ app.get("/searchAirline", (req, res) => {
 // Endpoint #18: Using the GET method to search for flights within price range
 app.get("/flights/price", (req, res) => {
     // Get request parameters (minimum price and maximum price)
-    min = req.query.min
-    max = req.query.max
+    min = req.query.min     // Minimum price
+    max = req.query.max     // Maximum price
 
-    // Return error message if beither min and max price is specified by the user
+    // Return error message if neither min and max price is specified by the user
     if (min == '' && max == '') {
         res.status(500).send({"Error Message":"Please specify price ranges!" })
     } else {
