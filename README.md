@@ -2,7 +2,7 @@
 Back-End Web Development (BED) CA1 Assignment
 Developed endpoints in the back-end side for a flight booking website
 
-# SQL Tables Created
+## SQL Tables Created
 Database name: sp_air
 - user - stores user information
     - user id
@@ -43,14 +43,14 @@ Database name: sp_air
     - endDate
     - discount
 
-# Foreign Keys
+## Foreign Keys
 - airport.airportid = flight.originAirport and flight.destinationAirport
 - flight.flightid = booking.flightid
 - user.userid = booking.userid
 - user.username = booking.name
 - flight.flightid = promotion.flightid
 
-# Summary of Endpoints Created
+## Summary of Endpoints Created
 1. Endpoint 1 - POST /users/ - Create a new user
 2. Endpoint 2 - GET /users/ - Get all users from the user database
 3. Endpoint 3 - GET /users/:id - Get user by their id
@@ -63,7 +63,7 @@ Database name: sp_air
 10. Endpoint 10 - DELETE /flight/:id/ - Delete a flight by its id
 11. Endpoint 11 - GET /transfer/flight/:originAirportId/:destinationAirportId - Get transfer flights to destination
 
-# Bonus Requirement Fufillment
+## Bonus Requirement Fufillment
 - Implementation of Multer in app.js to support uploading of image files into form-data in POSTMAN
     - File size limited to 1MB, otherwise error will be outputted
     - Only JPG and PNG files are accepted, using fileFilter function in Multer object and comparing with file mimetype
@@ -80,7 +80,7 @@ Database name: sp_air
     3. Endpoint 14 - GET /promotions/:promotionid - Get promotion by promotionid
     4. Endpoint 15 - DELETE /promotion/:promotionid - Delete a promotion by promotionid
 
-# Advanced Features
+## Advanced Features
 - Checkout Feature
     - Endpoint 16 - GET /checkout/:bookingid
     - Check if booking exists to be checked out
