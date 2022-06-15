@@ -3,6 +3,7 @@ BED Assignment CA1
 -   Name: Lee Quan Jun Ervin
 -   Class: DISM/FT/2B/21
 -   Filename: databaseConfig.js
+-   Description: JS script to connect to the SQL database
 */
 
 /*
