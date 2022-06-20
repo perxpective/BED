@@ -7,7 +7,7 @@ BED Assignment CA1
 */
 
 // Import SQL database from databaseConfig.js
-const { timeout } = require('nodemon/lib/config')
+const timeout = require('nodemon/lib/config')   // Import nodemon for easy debugging
 var db = require('./databaseConfig.js')
 var flightDB = {
     // Function to add new flight to the flight database

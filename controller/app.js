@@ -85,7 +85,7 @@ app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
         // Set the profile pic URL to the file path and link 
-        var profile_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
+        var profile_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
         // Function to add a new user and its data fields into the database
         user.addUser(username, email, contact, password, role, profile_pic_url, (err, result) => {
             // Checking for errors. Output erorr code 500 if error detected
@@ -159,7 +159,7 @@ app.put("/users/:id", upload.single('profile_pic_url'), (req, res) => {
         console.log(req.file)
 
         // Set the profile pic URL to the file path and link 
-        var profile_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
+        var profile_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
     }
 
     // Initiate function to update user by userid
@@ -235,7 +235,7 @@ app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
         // Set the profile pic URL to the file path and link 
-        var flight_pic_url = './uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
+        var flight_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
         // Function to create a flight in the flight database
         flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, (err, result) => {
             if (!err) {
