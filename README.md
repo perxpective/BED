@@ -27,6 +27,7 @@ Database name: sp_air
   - embark date
   - travel time
   - price
+  - product listing image
 
 - airport - stores airport name and country
   

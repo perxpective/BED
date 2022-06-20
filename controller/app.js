@@ -269,7 +269,7 @@ app.get("/flightDirect/:originAirportId/:destinationAirportId", (req, res) => {
 })
 
 // Endpoint #9: Using the POST method to add a new booking to the booking database
-app.post("/booking/:userid/:flightid", upload.none(), (req, res) => {
+app.post("/booking/:userid/:flightid", (req, res) => {
     // Get request parameters
     var userid = req.params.userid
     var flightid = req.params.flightid
@@ -330,7 +330,7 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
 })
 
 // Endpoint #12: Using the POST method to create a new promotion on the promotion database
-app.post("/promotion/:flightid", upload.none(), (req, res) => {
+app.post("/promotion/:flightid", (req, res) => {
     // Get flightid from request parameters
     var flightid = req.params.flightid
 
