@@ -6,7 +6,12 @@ BED Assignment CA1
 -   Description: This node.js script is where all the express API endpoints are stored (Tested using POSTMAN)
 */
 
-// Libraries and Objects to import
+/*
+-----------------------------------------------------------------------
+IMPORTS AND DECLARATIONS
+-----------------------------------------------------------------------
+*/
+
 var express = require("express")                    // Loading the express library
 var app = express()                                 // Creation of the express instance
 
@@ -62,6 +67,12 @@ app.use(bodyParser.json())          // Parse application/json
 app.use(express.json())
 app.use(urlencodedParser)           // Parse application/x-www-form-urlencoded
 
+
+/*
+-----------------------------------------------------------------------
+BASIC REQUIREMENT ENDPOINTS (1-11)
+-----------------------------------------------------------------------
+*/
 
 // Endpoint #1: Using the POST method to add a new user to the database
 app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
@@ -329,6 +340,12 @@ app.get("/transfer/flight/:originAirportId/:destinationAirportId", (req, res) =>
     })
 })
 
+/*
+-----------------------------------------------------------------------
+BONUS REQUIREMENT ENDPOINTS
+-----------------------------------------------------------------------
+*/
+
 // Endpoint #12: Using the POST method to create a new promotion on the promotion database
 app.post("/promotion/:flightid", (req, res) => {
     // Get flightid from request parameters
@@ -394,6 +411,12 @@ app.delete('/promotion/:promotionid', (req, res) => {
         }
     })
 })
+
+/*
+-----------------------------------------------------------------------
+ADVANCED FEATURE ENDPOINTS
+-----------------------------------------------------------------------
+*/
 
 // Endpoint #16: Using the GET method to checkout an existing booking 
 app.get('/checkout/:bookingid', (req, res) => {
@@ -547,6 +570,9 @@ app.get("/flights/price", (req, res) => {
     }
 })
 
-
-// Export app over to the main server.js file
-module.exports = app
+/*
+-----------------------------------------------------------------------
+EXPORT APP TO THE SERVER
+-----------------------------------------------------------------------
+*/
+module.exports = app // Export app over to the main server.js file

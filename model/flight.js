@@ -6,9 +6,18 @@ BED Assignment CA1
 -   Description: Program to handle data from the flight table of the SP AIR database 
 */
 
-// Import SQL database from databaseConfig.js
-const timeout = require('nodemon/lib/config')   // Import nodemon for easy debugging
+/*
+-----------------------------------------------------------------------
+IMPORT DATABASE CONFIGURATIONS
+-----------------------------------------------------------------------
+*/
 var db = require('./databaseConfig.js')
+
+/*
+-----------------------------------------------------------------------
+DECLARATION OF FLIGHT DATABASE FUNCTION OBJECT
+-----------------------------------------------------------------------
+*/
 var flightDB = {
     // Function to add new flight to the flight database
     newFlight: (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, callback) => {
@@ -201,4 +210,9 @@ var flightDB = {
     }
 }
 
+/*
+-----------------------------------------------------------------------
+EXPORT OF FLIGHT DATABASE FUNCTION OBJECT TO THE APP SCRIPT
+-----------------------------------------------------------------------
+*/
 module.exports = flightDB

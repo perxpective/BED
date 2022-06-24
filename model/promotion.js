@@ -6,7 +6,18 @@ BED Assignment CA1
 -   Description: Program to handle data from the promotion table of the SP AIR database
 */
 
+/*
+-----------------------------------------------------------------------
+IMPORT DATABASE CONFIGURATIONS
+-----------------------------------------------------------------------
+*/
 var db = require('./databaseConfig.js')
+
+/*
+-----------------------------------------------------------------------
+DECLARATION OF PROMOTION DATABASE FUNCTION OBJECT
+-----------------------------------------------------------------------
+*/
 var promotionDB = {
     // Function to add a new promotion to the promotion table
     newPromotion: (flightid, startDate, endDate, discount, callback) => {
@@ -171,4 +182,9 @@ var promotionDB = {
     }
 }
 
+/*
+-----------------------------------------------------------------------
+EXPORT OF PROMOTION DATABASE FUNCTION OBJECT TO THE APP SCRIPT
+-----------------------------------------------------------------------
+*/
 module.exports = promotionDB

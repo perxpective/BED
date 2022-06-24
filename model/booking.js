@@ -6,8 +6,18 @@ BED Assignment CA1
 -   Description: Program to handle data from the booking table of the SP AIR database 
 */
 
-// Import SQL database from databaseConfig.js
+/*
+-----------------------------------------------------------------------
+IMPORT DATABASE CONFIGURATIONS
+-----------------------------------------------------------------------
+*/
 var db = require('./databaseConfig.js')
+
+/*
+-----------------------------------------------------------------------
+DECLARATION OF BOOKING DATABASE FUNCTION OBJECT
+-----------------------------------------------------------------------
+*/
 var bookingDB = {
     // Function to create a new booking for a flight in the booking database
     newBooking: (name, passport, nationality, age, userid, flightid, callback) => {
@@ -91,4 +101,9 @@ var bookingDB = {
     }
 }
 
+/*
+-----------------------------------------------------------------------
+EXPORT OF BOOKING DATABASE FUNCTION OBJECT TO THE APP SCRIPT
+-----------------------------------------------------------------------
+*/
 module.exports = bookingDB

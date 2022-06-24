@@ -14,10 +14,19 @@ Tables to add in SP AIR Database
 - bookings 
 */
 
+/*
+-----------------------------------------------------------------------
+IMPORT SQL
+-----------------------------------------------------------------------
+*/
 // Importing the MySQL Library into databaseConfig.js'
 var mysql = require('mysql')    
 
-// Establishing a connection with the SP AIR MySQL Databse 
+/*
+-----------------------------------------------------------------------
+SQL DATABASE CONNECTION TO SERVER
+-----------------------------------------------------------------------
+*/
 var dbconnect = {
     getConnection: () => {
         var connection = mysql.createConnection({
@@ -31,6 +40,11 @@ var dbconnect = {
     }
 }
 
-module.exports = dbconnect  // Exporting the dbconnect function to controller
+/*
+-----------------------------------------------------------------------
+EXPORT OF DATABASE CONFIGURATIONS AND CONNECTION TO FUNCTION SCRIPTS
+-----------------------------------------------------------------------
+*/
+module.exports = dbconnect  
 
 

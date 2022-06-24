@@ -6,8 +6,18 @@ BED Assignment CA1
 -   Description: Program to handle data from the airport table of the SP AIR database 
 */
 
-// Import SQL database from databaseConfig.js
+/*
+-----------------------------------------------------------------------
+IMPORT DATABASE CONFIGURATIONS
+-----------------------------------------------------------------------
+*/
 var db = require('./databaseConfig.js')
+
+/*
+-----------------------------------------------------------------------
+DECLARATION OF AIRPORT DATABASE FUNCTION OBJECT
+-----------------------------------------------------------------------
+*/
 var airportDB = {
     // Function to add a new airport to airport database (args: name of airport, country of airport and description)
     addAirport: (name, country, description, callback) => {
@@ -71,4 +81,9 @@ var airportDB = {
     }
 }
 
+/*
+-----------------------------------------------------------------------
+EXPORT OF AIRPORT DATABASE FUNCTION OBJECT TO THE APP SCRIPT
+-----------------------------------------------------------------------
+*/
 module.exports = airportDB

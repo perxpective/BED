@@ -6,8 +6,18 @@ BED Assignment CA1
 -   Description: Program to handle data from the user table of the SP AIR database 
 */
 
-// Import SQL database from databaseConfig.js
+/*
+-----------------------------------------------------------------------
+IMPORT DATABASE CONFIGURATIONS
+-----------------------------------------------------------------------
+*/
 var db = require('./databaseConfig.js')
+
+/*
+-----------------------------------------------------------------------
+DECLARATION OF USER DATABASE FUNCTION OBJECT
+-----------------------------------------------------------------------
+*/
 var userDB = {
     // Function to get all users from the database
     getAllUsers: (callback) => {
@@ -163,4 +173,9 @@ var userDB = {
     }
 }
 
-module.exports = userDB // Exporting database functions to app.js
+/*
+-----------------------------------------------------------------------
+EXPORT OF USER DATABASE FUNCTION OBJECT TO THE APP SCRIPT
+-----------------------------------------------------------------------
+*/
+module.exports = userDB
