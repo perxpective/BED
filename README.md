@@ -3,7 +3,30 @@
 Back-End Web Development (BED) CA1 Assignment
 Developed endpoints in the back-end side for a flight booking website
 
-## 
+## Setup Instructions
+- Open the zip and open the extracted folder in Visual Studio Code
+-	Copy the db_init.sql file and run it on a SQL query on Workbench by clicking on the lightning icon
+-	On the databaseConfig.js file located in the model folder, change the password to your own password used in the Workbench
+-	On the terminal, run “node server.js”
+-	Test all of the endpoints on POSTMAN based on the documentations below
+-	Install all required node packages using “npm install”
+-	Refer to README.md for more details about the code
+-	Scripts:
+  -	Controller
+    -	App.js
+  -	Model
+    -	airport.js
+    -	booking.js
+    -	databaseConfig.js
+    -	flight.js
+    -	promotion.js
+    -	user.js
+  -	Uploads (Uploaded images from POSTMAN)
+  -	Package-lock.json
+  -	Package.json
+  -	README.md
+  -	Server.js
+
 
 ## SQL Tables Created
 
