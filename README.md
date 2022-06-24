@@ -41,6 +41,7 @@ Database name: sp_air
   - password
   - role
   - profile picture
+  - created_at
 
 - flight - stores flight information
   
@@ -53,6 +54,7 @@ Database name: sp_air
   - travel time
   - price
   - product listing image
+  - created_at
 
 - airport - stores airport name and country
   
@@ -68,6 +70,7 @@ Database name: sp_air
   - passport
   - nationality
   - age
+  - booked_at
 
 - promotion - store promotion period dates and discounts
   
