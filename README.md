@@ -11,7 +11,8 @@ Developed endpoints in the back-end side for a flight booking website
 -	Test all of the endpoints on POSTMAN based on the documentations below
 -	Install all required node packages using “npm install”
 -	Refer to README.md for more details about the code
--	Scripts:
+
+### Scripts
   -	Controller
     -	App.js
   -	Model
