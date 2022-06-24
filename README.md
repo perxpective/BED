@@ -12,20 +12,20 @@ Developed endpoints in the back-end side for a flight booking website
 -	Install all required node packages using “npm install”
 -	Refer to README.md for more details about the code
 -	Scripts:
-    -	Controller
-      -	App.js
-    -	Model
-      -	airport.js
-      -	booking.js
-      -	databaseConfig.js
-      -	flight.js
-      -	promotion.js
-      -	user.js
-    -	Uploads (Uploaded images from POSTMAN)
-    -	Package-lock.json
-    -	Package.json
-    -	README.md
-    -	Server.js
+  -	Controller
+    -	App.js
+  -	Model
+    -	airport.js
+    -	booking.js
+    -	databaseConfig.js
+    -	flight.js
+    -	promotion.js
+    -	user.js
+  -	Uploads (Uploaded images from POSTMAN)
+  -	Package-lock.json
+  -	Package.json
+  -	README.md
+  -	Server.js
 
 
 ## SQL Tables Created
