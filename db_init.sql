@@ -35,15 +35,6 @@ CREATE TABLE `airport` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `airport`
---
-
-LOCK TABLES `airport` WRITE;
-/*!40000 ALTER TABLE `airport` DISABLE KEYS */;
-/*!40000 ALTER TABLE `airport` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `booking`
 --
 
@@ -52,7 +43,7 @@ DROP TABLE IF EXISTS `booking`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `booking` (
   `bookingid` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(45) NOT NULL,
   `passport` varchar(45) NOT NULL,
   `nationality` varchar(45) NOT NULL,
   `age` int NOT NULL,
@@ -60,7 +51,6 @@ CREATE TABLE `booking` (
   `flightid` int NOT NULL,
   `booked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`bookingid`),
-  UNIQUE KEY `bookingid_UNIQUE` (`bookingid`),
   KEY `userid_idx` (`userid`),
   KEY `flightid_idx` (`flightid`),
   KEY `name_idx` (`name`),
@@ -69,15 +59,6 @@ CREATE TABLE `booking` (
   CONSTRAINT `userid` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `booking`
---
-
-LOCK TABLES `booking` WRITE;
-/*!40000 ALTER TABLE `booking` DISABLE KEYS */;
-/*!40000 ALTER TABLE `booking` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `flight`
@@ -103,17 +84,8 @@ CREATE TABLE `flight` (
   KEY `destinationAirport_idx` (`destinationAirport`),
   CONSTRAINT `destinationAirport` FOREIGN KEY (`destinationAirport`) REFERENCES `airport` (`airportid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `originAirport` FOREIGN KEY (`originAirport`) REFERENCES `airport` (`airportid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `flight`
---
-
-LOCK TABLES `flight` WRITE;
-/*!40000 ALTER TABLE `flight` DISABLE KEYS */;
-/*!40000 ALTER TABLE `flight` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `promotion`
@@ -129,21 +101,10 @@ CREATE TABLE `promotion` (
   `endDate` date NOT NULL,
   `discount` decimal(3,2) NOT NULL,
   PRIMARY KEY (`promotionid`),
-  UNIQUE KEY `startDate_UNIQUE` (`startDate`),
-  UNIQUE KEY `endDate_UNIQUE` (`endDate`),
   KEY `flightid_idx` (`flightid`),
   CONSTRAINT `fk_flightid` FOREIGN KEY (`flightid`) REFERENCES `flight` (`flightid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `promotion`
---
-
-LOCK TABLES `promotion` WRITE;
-/*!40000 ALTER TABLE `promotion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `promotion` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -166,15 +127,6 @@ CREATE TABLE `user` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -185,4 +137,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-05  0:43:55
+-- Dump completed on 2022-06-25 18:06:31
