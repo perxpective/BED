@@ -89,32 +89,30 @@ app.post("/users/", upload.single('profile_pic_url'), (req, res) => {
     console.log(req.body)
 
     // Check if file exists
-    if (!req.file) {
-        console.log("IMAGE NOT FOUND")
-        res.status(500).send({ "Error Message": "Please upload an image!" })
-    } else {
+    if (req.file) {
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
         // Set the profile pic URL to the file path and link 
-        var profile_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
-        // Function to add a new user and its data fields into the database
-        user.addUser(username, email, contact, password, role, profile_pic_url, (err, result) => {
-            // Checking for errors. Output erorr code 500 if error detected
-            if (!err) {
-                // Responds by sending the result insertId (primary key) via a JSON string 
-                console.log("Inserted userid: " + result.insertId)
-                res.status(201).send({'userid': result.insertId})   // Return error code 201
-            } else if (err.errno == 1062) {
-                // Checking for duplicate error of input data
-                console.log("[ERROR DETECTED] 422")
-                console.log("[422] Duplicate Entry Detected.")
-                res.status(422).send({"Error Message":"[422] Unprocessable Entity (Duplicated Entry Detected)"})
-            } else {
-                console.log("[ERROR DETECTED] 500")
-                res.status(500).send({ "Error Message": "[500] Unknown Error" })
-            }
-        })
+        var profile_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')   
     }
+
+    // Function to add a new user and its data fields into the database
+    user.addUser(username, email, contact, password, role, profile_pic_url, (err, result) => {
+        // Checking for errors. Output erorr code 500 if error detected
+        if (!err) {
+            // Responds by sending the result insertId (primary key) via a JSON string 
+            console.log("Inserted userid: " + result.insertId)
+            res.status(201).send({'userid': result.insertId})   // Return error code 201
+        } else if (err.errno == 1062) {
+            // Checking for duplicate error of input data
+            console.log("[ERROR DETECTED] 422")
+            console.log("[422] Duplicate Entry Detected.")
+            res.status(422).send({"Error Message":"[422] Unprocessable Entity (Duplicated Entry Detected)"})
+        } else {
+            console.log("[ERROR DETECTED] 500")
+            res.status(500).send({ "Error Message": "[500] Unknown Error" })
+        }
+    })
 
 
 })
@@ -238,26 +236,24 @@ app.post("/flight/", upload.single("flight_pic_url"), (req, res) => {
     var travelTime = req.body.travelTime
     var price = req.body.price
     // Check if file exists
-    if (!req.file) {
-        console.log("IMAGE NOT FOUND")
-        res.status(500).send("Please upload an image")  // Returns an error if image is not uploaded to POSTMAN form-data
-    } else {
+    if (req.file) {
         // Output the contents of the image file object if upload detected
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
         // Set the profile pic URL to the file path and link 
         var flight_pic_url = 'http://localhost:8081/uploads/' + req.file.originalname.toLowerCase().split(' ').join('-')
-        // Function to create a flight in the flight database
-        flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, (err, result) => {
-            if (!err) {
-                console.log("Inserted flightid " + result.insertId)
-                res.status(201).send({'flightid': result.insertId })   // Return error code 201
-            } else {
-                console.log("[ERROR DETECTED] 500")
-                res.status(500).send({ "Error Message": "Airport does not exist!" })
-            }
-        })
     }
+    
+    // Function to create a flight in the flight database
+    flight.newFlight(flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price, flight_pic_url, (err, result) => {
+        if (!err) {
+            console.log("Inserted flightid " + result.insertId)
+            res.status(201).send({'flightid': result.insertId })   // Return error code 201
+        } else {
+            console.log("[ERROR DETECTED] 500")
+            res.status(500).send({ "Error Message": "Airport does not exist!" })
+        }
+    })
 })
 
 // Endpoint #8: Using the GET method to retrieve flight information travelling from origin to destination airport
