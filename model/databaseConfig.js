@@ -1,6 +1,7 @@
 /* 
 BED Assignment CA1
 -   Name: Lee Quan Jun Ervin
+-   Admin No: 2104005
 -   Class: DISM/FT/2B/21
 -   Filename: databaseConfig.js
 -   Description: JS script to connect to the SQL database
@@ -19,7 +20,6 @@ Tables to add in SP AIR Database
 IMPORT SQL
 -----------------------------------------------------------------------
 */
-// Importing the MySQL Library into databaseConfig.js'
 var mysql = require('mysql')    
 
 /*

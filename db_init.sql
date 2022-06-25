@@ -1,3 +1,12 @@
+/* 
+BED Assignment CA1
+-   Name: Lee Quan Jun Ervin
+-   Admin No: 2104005
+-   Class: DISM/FT/2B/21
+-   Filename: server.js
+-   Description: SQL Script to run to create the SP AIR schema, tables and columns
+*/
+
 CREATE DATABASE  IF NOT EXISTS `sp_air` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `sp_air`;
 -- MySQL dump 10.13  Distrib 8.0.29, for Win64 (x86_64)

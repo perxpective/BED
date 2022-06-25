@@ -5,12 +5,22 @@ Developed endpoints in the back-end side for a flight booking website
 
 ## Setup Instructions
 - Open the zip and open the extracted folder in Visual Studio Code
--	Copy the db_init.sql file and run it on a SQL query on Workbench by clicking on the lightning icon
--	On the databaseConfig.js file located in the model folder, change the password to your own password used in the Workbench
--	On the terminal, run “node server.js”
+-	Open the db_init.sql file, paste it on the query and run it on the Workbench by clicking on the lightning icon
+  - If you cannot open the file, open the SQL file in a text editor and copy and paste the contents on the query
+-	On the databaseConfig.js file located in the model folder, change the password to your own password that you usually use in the Workbench
+-	On the terminal, run “nodemon" or "node server.js" if the first command does not work and you do not have nodemon installed
 -	Test all of the endpoints on POSTMAN based on the documentations below
--	Install all required node packages using “npm install”
+-	Install all the required node packages using “npm install”
 -	Refer to README.md for more details about the code
+
+## Packages Installed
+- Body Parser
+- Express
+- Multer
+- MySQL
+- Nodemon
+
+Refer to the package.json file to view all the dependencies
 
 ### Scripts
   -	Controller

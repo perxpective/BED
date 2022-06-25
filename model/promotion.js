@@ -1,6 +1,7 @@
 /* 
 BED Assignment CA1
 -   Name: Lee Quan Jun Ervin
+-   Admin No: 2104005
 -   Class: DISM/FT/2B/21
 -   Filename: promotion.js
 -   Description: Program to handle data from the promotion table of the SP AIR database
