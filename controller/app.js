@@ -159,10 +159,7 @@ app.put("/users/:id", upload.single('profile_pic_url'), (req, res) => {
     console.log(req.body)
 
     // Check if file exists
-    if (!req.file) {
-        console.log("IMAGE NOT FOUND")
-        res.status(500).send("Please upload an image")  // Returns an error if image is not uploaded to POSTMAN form-data
-    } else {
+    if (req.file) {
         // Output the contents of the image file object if upload detected
         console.log("[IMAGE CONTENTS]")
         console.log(req.file)
