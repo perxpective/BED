@@ -356,18 +356,29 @@ app.post("/promotion/:flightid", (req, res) => {
     var endDate = req.body.endDate
     var discount = req.body.discount
 
-    // Function to add a new promotion and their dates into the promotion database
-    promotion.newPromotion(flightid, startDate, endDate, discount, (err, result) => {
-        if (!err) {
-            res.status(201).send({"promotionid": result.insertId})
-        } else if (err.errno == 1292) {
-            res.status(500).send({ "Error Message": "Invalid Data Type Received!" })
-        } else if (err.errno == 1452) {
-            res.status(500).send({ "Error Message": "Cannot create promotion for nonexistent flight!" })
-        } else {
-            res.status(500).send({ "Error Message": "[500] Unknown Error" })
-        }
-    })
+    // Convert dates into JavaScript Date objects
+    const startDateObject = new Date(startDate)
+    const endDateObject = new Date(endDate)
+
+    // Validate dates from request body
+    if (endDateObject - startDateObject < 0) {
+        res.status(500).send({ "Error Message": "End date cannot be before start date! Input a valid period!" })
+    } else if (startDate === endDate) {
+        res.status(500).send({ "Error Message": "Start and end dates cannot be the same!" })
+    } else {
+        // Function to add a new promotion and their dates into the promotion database
+        promotion.newPromotion(flightid, startDate, endDate, discount, (err, result) => {
+            if (!err) {
+                res.status(201).send({"promotionid": result.insertId})
+            } else if (err.errno == 1292) {
+                res.status(500).send({ "Error Message": "Invalid Data Type Received!" })
+            } else if (err.errno == 1452) {
+                res.status(500).send({ "Error Message": "Cannot create promotion for nonexistent flight!" })
+            } else {
+                res.status(500).send({ "Error Message": "[500] Unknown Error" })
+            }
+        })
+    }
 })
 
 // Endpoint #13: Using the GET method to get all promotion information from the promotion database
