@@ -110,7 +110,7 @@ var promotionDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL command to insert new flight data into flight table
+                // SQL command to delete a promotion from the promotion table
                 var sql = "delete from sp_air.promotion where promotionid = ?"
                 console.log(`RUNNING COMMAND: ${sql}`)
                 connection.query(sql, [promotionid], (err, result) => {
@@ -137,7 +137,7 @@ var promotionDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL command to insert new flight data into flight table
+                // SQL command to select promotion by flightid
                 var sql = "select * from sp_air.promotion where flightid = ?"
                 console.log(`RUNNING COMMAND: ${sql}`)
                 connection.query(sql, [flightid], (err, result) => {
@@ -164,7 +164,7 @@ var promotionDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL command to insert new flight data into flight table
+                // SQL command to select discount value from the promotion by the flightid
                 var sql = "select discount from sp_air.promotion where flightid = ?"
                 console.log(`RUNNING COMMAND: ${sql}`)
                 connection.query(sql, [flightid], (err, result) => {

@@ -20,7 +20,7 @@ DECLARATION OF BOOKING DATABASE FUNCTION OBJECT
 -----------------------------------------------------------------------
 */
 var bookingDB = {
-    // Function to create a new booking for a flight in the booking database
+    // Function to create a new booking for a flight in the booking database (args, name, passport, nationality, age, userid and flightid)
     newBooking: (name, passport, nationality, age, userid, flightid, callback) => {
         var connection = db.getConnection()
         connection.connect((err) => {
@@ -46,8 +46,7 @@ var bookingDB = {
             }
         })
     },
-
-
+    // Function to get booking information to check out
     checkoutBooking: (bookingid, callback) => {
         var connection = db.getConnection()
         connection.connect((err) => {
@@ -56,7 +55,7 @@ var bookingDB = {
                 return callback(err, null)
             } else {
                 console.log("Connection established!")
-                // SQL Command to insert new data into the booking table
+                // SQL Command to select booking information by bookingid
                 var sql = "select * from sp_air.booking where bookingid = ?"
                 console.log(`RUNNING COMMAND: ${sql}`)
                 connection.query(sql, [bookingid], (err, result) => {
@@ -83,7 +82,7 @@ var bookingDB = {
                 return callback(err, null)
             } else {
                 console.log("Connection established!")
-                // SQL Command to insert new data into the booking table
+                // SQL Command to select flightid from booking information by bookingid
                 var sql = "select flightid from sp_air.booking where bookingid = ?"
                 console.log(`RUNNING COMMAND: ${sql}`)
                 connection.query(sql, [bookingid], (err, result) => {

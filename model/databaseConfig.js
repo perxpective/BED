@@ -46,5 +46,3 @@ EXPORT OF DATABASE CONFIGURATIONS AND CONNECTION TO FUNCTION SCRIPTS
 -----------------------------------------------------------------------
 */
 module.exports = dbconnect  
-
-

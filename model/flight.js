@@ -55,7 +55,7 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL Command to 
+                // SQL Command to select flightid, flight code by origin airport id and destination airport id, replacing the ids with name of the airports by performing another selection by the airportids
                 var sql = `select flightId, flightCode, (select name from airport where airportid = ?) as originAirport, (select name from airport where airportid = ?) as destinationAirport, embarkdate, travelTime, price from flight where flight.originAirport = ? and flight.destinationAirport = ?`
                 connection.query(sql, [originAirportId, destinationAirportId, originAirportId, destinationAirportId], (err, result) => {
                     connection.end()
@@ -104,7 +104,7 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL statement to delete flight based on flightid
+                // SQL statement to create two temporary tables and join the flight information together if destination airport of first flight matches the origin airport of the second flight
                 var sql = `
                 create temporary table if not exists first_flight (flightid int not null, flightCode varchar(45) not null, aircraft varchar(45) not null, originAirport varchar(45) not null, destinationAirport varchar(45) not null, price float not null);
                 insert into first_flight select flightid, flightCode, aircraft, originAirport, destinationAirport, price from flight where flight.originAirport = ? and flight.destinationAirport != ?;
@@ -125,7 +125,7 @@ var flightDB = {
         })
     },
 
-    // Function to get flight by flightid
+    // Function to get flight price by flightid
     getFlightPriceById: (flightid, callback) => {
         var connection = db.getConnection()
         connection.connect((err) => {
@@ -133,7 +133,7 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL statement to delete flight based on flightid
+                // SQL statement to select price of the flight by flightid
                 var sql = "select price from flight where flightid = ?"
                 connection.query(sql, [flightid], (err, result) => {
                     connection.end()
@@ -158,7 +158,7 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                // SQL statement to select flight by airline code
+                // SQL statement to select flight by airline code based on the search query
                 var sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where flightCode like ?"
                 connection.query(sql, [searchQuery], (err, result) => {
                     connection.end()
@@ -183,11 +183,10 @@ var flightDB = {
                 console.log(err)
                 return callback(err, null)
             } else {
-                
-                if (max == '' && min !== '') {          // If maximum price is given and minimum price is not given
+                if (max == '' && min !== '') {          // If minimum price is given and minimum price is not given
                     sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where price >= ?"
                     array = [min]
-                } else if (min == '' && max !== '') {   // If minimum price is given but maximum price is not given
+                } else if (min == '' && max !== '') {   // If maximum price is given but maximum price is not given
                     sql = "select flightid, flightCode, aircraft, (select name from airport where airportid = flight.originAirport) as originAirport, (select name from airport where airportid = flight.destinationAirport) as destinationAirport, embarkDate, travelTime, price, flight_pic_url from sp_air.flight where price <= ?"
                     array = [max]
                 } else if (max !== '' && min !== '') {  // If both maximum and minimum price is given by the user
